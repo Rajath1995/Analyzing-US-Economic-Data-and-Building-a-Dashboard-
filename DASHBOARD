@@ -1,0 +1,38 @@
+import pandas as pd
+from bokeh.plotting import figure, output_file, show,output_notebook
+output_notebook()
+
+links={'GDP':'https://s3-api.us-geo.objectstorage.softlayer.net/cf-courses-data/CognitiveClass/PY0101EN/projects/coursera_project/clean_gdp.csv',\
+       'unemployment':'https://s3-api.us-geo.objectstorage.softlayer.net/cf-courses-data/CognitiveClass/PY0101EN/projects/coursera_project/clean_unemployment.csv'}
+
+def make_dashboard(x, gdp_change, unemployment, title, file_name):
+    output_file(file_name)
+    p = figure(title=title, x_axis_label='year', y_axis_label='%')
+    p.line(x.squeeze(), gdp_change.squeeze(), color="firebrick", line_width=4, legend="% GDP change")
+    p.line(x.squeeze(), unemployment.squeeze(), line_width=4, legend="% unemployed")
+    show(p)
+    
+gdp_path=links['GDP']
+df_gdp=pd.read_csv(gdp_path)
+
+print_head=df_gdp.head()
+print(print_head)
+
+unemp_path=links['unemployment']
+df_unemp=pd.read_csv(unemp_path)
+
+print_head=df_unemp.head()
+print(print_head)
+
+unemp_higher=df_unemp['unemployment']>8.5
+df_unemp[unemp_higher]
+
+x = df_gdp[['date']]
+gdp_change = df_gdp[['change-current']]
+
+unemployment = df_unemp[['unemployment']]
+title = 'A study of Gdp and Unemployemnt'
+
+file_name = "index.html"
+
+make_dashboard(x=x, gdp_change=gdp_change, unemployment=unemployment, title=title, file_name=file_name)
